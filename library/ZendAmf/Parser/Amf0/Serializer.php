@@ -11,7 +11,9 @@
 namespace ZendAmf\Parser\Amf0;
 
 use DateTime;
-use Zend\Amf;
+
+use ZendAmf as Amf;
+
 use ZendAmf\Parser;
 use ZendAmf\Parser\AbstractSerializer;
 

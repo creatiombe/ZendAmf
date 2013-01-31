@@ -10,9 +10,11 @@
 
 namespace ZendAmf\Response;
 
-use Zend\Amf;
+use ZendAmf\Value;
+use ZendAmf\Constants;
 use ZendAmf\Parser;
 use ZendAmf\Parser\Amf0;
+use ZendAmf\Value\MessageBody;
 
 /**
  * Handles converting the PHP object ready for response back into AMF
@@ -77,7 +79,7 @@ class StreamResponse implements ResponseInterface
             $serializer = new Amf0\Serializer($stream);
             $stream->writeUTF($header->name);
             $stream->writeByte($header->mustRead);
-            $stream->writeLong(Amf\Constants::UNKNOWN_CONTENT_LENGTH);
+            $stream->writeLong(Constants::UNKNOWN_CONTENT_LENGTH);
             if (is_object($header->data)) {
                 // Workaround for PHP5 with E_STRICT enabled complaining about
                 // "Only variables should be passed by reference"
@@ -95,9 +97,9 @@ class StreamResponse implements ResponseInterface
             $serializer = new Amf0\Serializer($stream);
             $stream->writeUTF($body->getTargetURI());
             $stream->writeUTF($body->getResponseURI());
-            $stream->writeLong(Amf\Constants::UNKNOWN_CONTENT_LENGTH);
+            $stream->writeLong(Constants::UNKNOWN_CONTENT_LENGTH);
             $bodyData   = $body->getData();
-            $markerType = ($this->_objectEncoding == Amf\Constants::AMF0_OBJECT_ENCODING) ? null : Amf\Constants::AMF0_AMF3;
+            $markerType = ($this->_objectEncoding == Constants::AMF0_OBJECT_ENCODING) ? null : Constants::AMF0_AMF3;
             if (is_object($bodyData)) {
                 // Workaround for PHP5 with E_STRICT enabled complaining about
                 // "Only variables should be passed by reference"
@@ -137,7 +139,7 @@ class StreamResponse implements ResponseInterface
      * @param  \ZendAmf\Value\MessageBody $body
      * @return \ZendAmf\Response\StreamResponse
      */
-    public function addAmfBody(Amf\Value\MessageBody $body)
+    public function addAmfBody(Value\MessageBody $body)
     {
         $this->_bodies[] = $body;
         return $this;
@@ -159,7 +161,7 @@ class StreamResponse implements ResponseInterface
      * @param  \ZendAmf\Value\MessageHeader $header
      * @return \ZendAmf\Response\StreamResponse
      */
-    public function addAmfHeader(Amf\Value\MessageHeader $header)
+    public function addAmfHeader(Value\MessageHeader $header)
     {
         $this->_headers[] = $header;
         return $this;

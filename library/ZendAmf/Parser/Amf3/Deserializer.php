@@ -11,9 +11,13 @@
 namespace ZendAmf\Parser\Amf3;
 
 use DateTime;
-use Zend\Amf;
-use ZendAmf\Parser;
+
+use ZendAmf\Constants;
+use ZendAmf\Parser\TypeLoader;
 use ZendAmf\Parser\AbstractDeserializer;
+use ZendAmf\Exception\InvalidArgumentException;
+use ZendAmf\Exception\OutOfBoundsException;
+use ZendAmf\Value\Messaging\ArrayCollection;
 
 /**
  * Read an AMF3 input stream and convert it into PHP data types.
@@ -68,33 +72,33 @@ class Deserializer extends AbstractDeserializer
         }
 
         switch($typeMarker) {
-            case Amf\Constants::AMF3_UNDEFINED:
+            case Constants::AMF3_UNDEFINED:
                  return null;
-            case Amf\Constants::AMF3_NULL:
+            case Constants::AMF3_NULL:
                  return null;
-            case Amf\Constants::AMF3_BOOLEAN_FALSE:
+            case Constants::AMF3_BOOLEAN_FALSE:
                  return false;
-            case Amf\Constants::AMF3_BOOLEAN_TRUE:
+            case Constants::AMF3_BOOLEAN_TRUE:
                  return true;
-            case Amf\Constants::AMF3_INTEGER:
+            case Constants::AMF3_INTEGER:
                  return $this->readInteger();
-            case Amf\Constants::AMF3_NUMBER:
+            case Constants::AMF3_NUMBER:
                  return $this->_stream->readDouble();
-            case Amf\Constants::AMF3_STRING:
+            case Constants::AMF3_STRING:
                  return $this->readString();
-            case Amf\Constants::AMF3_DATE:
+            case Constants::AMF3_DATE:
                  return $this->readDate();
-            case Amf\Constants::AMF3_ARRAY:
+            case Constants::AMF3_ARRAY:
                  return $this->readArray();
-            case Amf\Constants::AMF3_OBJECT:
+            case Constants::AMF3_OBJECT:
                  return $this->readObject();
-            case Amf\Constants::AMF3_XML:
-            case Amf\Constants::AMF3_XMLSTRING:
+            case Constants::AMF3_XML:
+            case Constants::AMF3_XMLSTRING:
                  return $this->readXmlString();
-            case Amf\Constants::AMF3_BYTEARRAY:
+            case Constants::AMF3_BYTEARRAY:
                  return $this->readString();
             default:
-                throw new Parser\Exception\InvalidArgumentException('Unsupported type marker: ' . $typeMarker);
+                throw new InvalidArgumentException('Unsupported type marker: ' . $typeMarker);
         }
     }
 
@@ -169,7 +173,7 @@ class Deserializer extends AbstractDeserializer
             // reference string
             $stringReference = $stringReference >> 1;
             if ($stringReference >= count($this->_referenceStrings)) {
-                throw new Parser\Exception\OutOfBoundsException('Undefined string reference: ' . $stringReference);
+                throw new OutOfBoundsException('Undefined string reference: ' . $stringReference);
             }
             // reference string found
             return $this->_referenceStrings[$stringReference];
@@ -203,7 +207,7 @@ class Deserializer extends AbstractDeserializer
         if (($dateReference & 0x01) == 0) {
             $dateReference = $dateReference >> 1;
             if ($dateReference>=count($this->_referenceObjects)) {
-                throw new Parser\Exception\OutOfBoundsException('Undefined date reference: ' . $dateReference);
+                throw new OutOfBoundsException('Undefined date reference: ' . $dateReference);
             }
             return $this->_referenceObjects[$dateReference];
         }
@@ -229,7 +233,7 @@ class Deserializer extends AbstractDeserializer
         if (($arrayReference & 0x01)==0) {
             $arrayReference = $arrayReference >> 1;
             if ($arrayReference >= count($this->_referenceObjects)) {
-                throw new Parser\Exception\OutOfBoundsException('Unknow array reference: ' . $arrayReference);
+                throw new OutOfBoundsException('Unknow array reference: ' . $arrayReference);
             }
             return $this->_referenceObjects[$arrayReference];
         }
@@ -272,7 +276,7 @@ class Deserializer extends AbstractDeserializer
         if ($storedObject) {
             $ref = $traitsInfo;
             if (!isset($this->_referenceObjects[$ref])) {
-                throw new Parser\Exception\OutOfBoundsException('Unknown Object reference: ' . $ref);
+                throw new OutOfBoundsException('Unknown Object reference: ' . $ref);
             }
             $returnObject = $this->_referenceObjects[$ref];
         } else {
@@ -282,7 +286,7 @@ class Deserializer extends AbstractDeserializer
             if ($storedClass) {
                 $ref = $traitsInfo;
                 if (!isset($this->_referenceDefinitions[$ref])) {
-                    throw new Parser\Exception\OutOfBoundsException('Unknows Definition reference: '. $ref);
+                    throw new OutOfBoundsException('Unknows Definition reference: '. $ref);
                 }
                 // Populate the reference attributes
                 $className     = $this->_referenceDefinitions[$ref]['className'];
@@ -304,11 +308,11 @@ class Deserializer extends AbstractDeserializer
             } else {
                 // Defined object
                 // Typed object lookup against registered classname maps
-                if ($loader = Amf\Parser\TypeLoader::loadType($className)) {
+                if ($loader = TypeLoader::loadType($className)) {
                     $returnObject = new $loader();
                 } else {
                     //user defined typed object
-                    throw new Parser\Exception\OutOfBoundsException('Typed object not found: '. $className . ' ');
+                    throw new OutOfBoundsException('Typed object not found: '. $className . ' ');
                 }
             }
 
@@ -318,7 +322,7 @@ class Deserializer extends AbstractDeserializer
             $properties = array(); // clear value
             // Check encoding types for additional processing.
             switch ($encoding) {
-                case (Amf\Constants::ET_EXTERNAL):
+                case (Constants::ET_EXTERNAL):
                     // Externalizable object such as {ArrayCollection} and {ObjectProxy}
                     if (!$storedClass) {
                         $this->_referenceDefinitions[] = array(
@@ -329,7 +333,7 @@ class Deserializer extends AbstractDeserializer
                     }
                     $returnObject->externalizedData = $this->readTypeMarker();
                     break;
-                case (Amf\Constants::ET_DYNAMIC):
+                case (Constants::ET_DYNAMIC):
                     // used for Name-value encoding
                     if (!$storedClass) {
                         $this->_referenceDefinitions[] = array(
@@ -378,7 +382,7 @@ class Deserializer extends AbstractDeserializer
             }
         }
 
-        if($returnObject instanceof Amf\Value\Messaging\ArrayCollection) {
+        if($returnObject instanceof ArrayCollection) {
             if(isset($returnObject->externalizedData)) {
                 $returnObject = $returnObject->externalizedData;
             } else {
