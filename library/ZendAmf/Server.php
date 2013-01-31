@@ -12,8 +12,8 @@ namespace ZendAmf;
 
 use ZendAmf\Exception;
 use Zend\Authentication\AuthenticationService;
-use Zend\Loader\Broker;
-use Zend\Loader\PluginBroker;
+use Zend\Permissions\Acl;
+use Zend\Loader\PluginClassLocator;
 use Zend\Server\Reflection;
 use Zend\Server\Server as ServerDefinition;
 
@@ -44,9 +44,9 @@ class Server implements ServerDefinition
 
     /**
      * Loader for classes in added directories
-     * @var Zend\Loader\Broker
+     * @var \Zend\Loader\PluginClassLocator
      */
-    protected $_broker;
+    protected $_loader;
 
     /**
      * @var bool Production flag; whether or not to return exception messages
@@ -55,13 +55,13 @@ class Server implements ServerDefinition
 
     /**
      * Request processed
-     * @var null|ZendAmf\Request\StreamRequest
+     * @var null|\ZendAmf\Request\StreamRequest
      */
     protected $_request = null;
 
     /**
      * Class to use for responses
-     * @var null|ZendAmf\Response\StreamResponse
+     * @var null|\ZendAmf\Response\StreamResponse
      */
     protected $_response;
 
@@ -106,14 +106,14 @@ class Server implements ServerDefinition
     /**
      * Authentication service object
      *
-     * @var Zend\Authentication\AuthenticationService
+     * @var \Zend\Authentication\AuthenticationService
      */
     protected $_authService;
 
     /**
      * ACL handler object
      *
-     * @var \Zend\Acl\Acl
+     * @var \Zend\Permissions\Acl\Acl
      */
     protected $_acl;
 
@@ -122,13 +122,13 @@ class Server implements ServerDefinition
      */
     public function __construct()
     {
-        Parser\TypeLoader::setResourceBroker(new Parser\ParserBroker());
+        Parser\TypeLoader::setResourceLoader(new \ZendAmf\Parser\ParserLoader());
     }
 
     /**
      * Set authentication service
      *
-     * @param  Zend\Authentication\AuthenticationService $auth
+     * @param  \Zend\Authentication\AuthenticationService $auth
      * @return Server
      */
     public function setAuthService(AuthenticationService $auth)
@@ -140,7 +140,7 @@ class Server implements ServerDefinition
    /**
      * Get authentication service
      *
-     * @return Zend\Authentication\AuthenticationService
+     * @return \Zend\Authentication\AuthenticationService
      */
     public function getAuthService()
     {
@@ -175,10 +175,10 @@ class Server implements ServerDefinition
     /**
      * Set ACL adapter
      *
-     * @param  \Zend\Acl\Acl $acl
+     * @param  \Zend\Permissions\Acl\Acl $acl
      * @return Server
      */
-    public function setAcl(\Zend\Acl\Acl $acl)
+    public function setAcl(Acl\Acl $acl)
     {
         $this->_acl = $acl;
         return $this;
@@ -186,7 +186,7 @@ class Server implements ServerDefinition
    /**
      * Get ACL adapter
      *
-     * @return \Zend\Acl\Acl
+     * @return \Zend\Permissions\Acl\Acl
      */
     public function getAcl()
     {
@@ -252,7 +252,7 @@ class Server implements ServerDefinition
             $isObject = is_object($object);
             $class    = ($isObject) ? get_class($object) : $object;
             if(!$this->_acl->hasResource($class)) {
-                $this->_acl->addResource(new \Zend\Acl\Resource\GenericResource($class));
+                $this->_acl->addResource(new Acl\Resource\GenericResource($class));
             }
             if (method_exists($object, 'initAcl')) {
                 // if initAcl returns false, no ACL check
@@ -284,44 +284,44 @@ class Server implements ServerDefinition
     }
 
     /**
-     * Set broker instance
+     * Set loader instance
      *
-     * @param  string|Broker $broker
+     * @param  string|PluginClassLocator $loader
      * @return Server
      * @throws Exception\InvalidArgumentException
      */
-    public function setBroker($broker)
+    public function setLoader($loader)
     {
-        if (is_string($broker)) {
-            if (!class_exists($broker)) {
+        if (is_string($loader)) {
+            if (!class_exists($loader)) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                    'Invalid broker class ("") provided; could not resolve class',
-                    $broker
+                    'Invalid loader class ("") provided; could not resolve class',
+                    $loader
                 ));
             }
-            $broker = new $broker;
+            $loader = new $loader;
         }
-        if (!$broker instanceof Broker) {
+        if (!$loader instanceof PluginClassLocator) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Broker must implement Zend\Loader\Broker; received ""',
-                (is_object($broker) ? get_class($broker) : gettype($broker))
+                'Loader must implement Zend\Loader\PluginClassLocator; received ""',
+                (is_object($loader) ? get_class($loader) : gettype($loader))
             ));
         }
-        $this->_broker = $broker;
+        $this->_loader = $loader;
         return $this;
     }
 
     /**
-     * Get PluginBroker for the Server
+     * Get PluginLoader for the Server
      *
-     * @return Zend\Loader\PluginBroker
+     * @return \Zend\Loader\PluginClassLocator
      */
-    public function getBroker()
+    public function getLoader()
     {
-        if (empty($this->_broker)) {
-            $this->setBroker(new PluginBroker());
+        if (empty($this->_loader)) {
+            $this->setLoader(new \ZendAmf\Parser\ParserLoader());
         }
-        return $this->_broker;
+        return $this->_loader;
     }
 
     /**
@@ -350,7 +350,7 @@ class Server implements ServerDefinition
                     throw new Exception\RuntimeException('Can not call "' . $className . '" - use setClass()');
                 }
                 try {
-                    $this->getBroker()->getClassLoader()->load($className);
+                    $this->getLoader()->load($className);
                 } catch (\Exception $e) {
                     throw new Exception\RuntimeException('Class "' . $className . '" does not exist: '.$e->getMessage(), 0, $e);
                 }

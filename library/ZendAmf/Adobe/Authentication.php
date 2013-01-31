@@ -11,8 +11,8 @@
 namespace ZendAmf\Adobe;
 
 use stdClass;
-use Zend\Acl\Acl;
-use Zend\Acl\Role;
+use Zend\Permissions\Acl\Acl;
+use Zend\Permissions\Acl\Role\GenericRole;
 use ZendAmf\AbstractAuthentication;
 use Zend\Authentication\Adapter as AuthenticationAdapter;
 use Zend\Authentication\Result as AuthenticationResult;
@@ -61,7 +61,7 @@ Roles file format:
 </roles>
 */
         foreach($xml->role as $role) {
-            $this->acl->addRole(new Role\GenericRole((string)$role["id"]));
+            $this->acl->addRole(new GenericRole((string)$role["id"]));
             foreach($role->user as $user) {
                 $this->users[(string)$user['name']] = array(
                     'password' => (string)$user['password'],

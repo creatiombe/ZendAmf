@@ -10,7 +10,12 @@
 
 namespace ZendAmf\Request;
 
-use Zend\Amf;
+use ZendAmf\Constants;
+use ZendAmf\Exception\InvalidArgumentException;
+use ZendAmf\Exception\RuntimeException;
+use ZendAmf\Parser\Amf0\Deserializer as Amf0Deserializer;
+use ZendAmf\Parser\Amf3\Deserializer as Amf3Deserializer;
+use ZendAmf\Parser\InputStream;
 use ZendAmf\Parser;
 use ZendAmf\Value;
 
@@ -49,7 +54,7 @@ class StreamRequest implements RequestInterface
     protected $_inputStream;
 
     /**
-     * @var Parser\Amf0\Deserializer
+     * @var Amf0Deserializer
      */
     protected $_deserializer;
 
@@ -68,7 +73,7 @@ class StreamRequest implements RequestInterface
     public function initialize($request)
     {
         $this->_inputStream  = new Parser\InputStream($request);
-        $this->_deserializer = new Amf\Parser\Amf0\Deserializer($this->_inputStream);
+        $this->_deserializer = new Amf0Deserializer($this->_inputStream);
         $this->readMessage($this->_inputStream);
         return $this;
     }
@@ -78,16 +83,16 @@ class StreamRequest implements RequestInterface
      *
      * @param  \ZendAmf\Parser\InputStream
      * @return \ZendAmf\Request\StreamRequest
-     * @throws Amf\Exception\RuntimeException
+     * @throws RuntimeException
      */
     public function readMessage(Parser\InputStream $stream)
     {
         $clientVersion = $stream->readUnsignedShort();
-        if (($clientVersion != Amf\Constants::AMF0_OBJECT_ENCODING)
-            && ($clientVersion != Amf\Constants::AMF3_OBJECT_ENCODING)
-            && ($clientVersion != Amf\Constants::FMS_OBJECT_ENCODING)
+        if (($clientVersion != Constants::AMF0_OBJECT_ENCODING)
+            && ($clientVersion != Constants::AMF3_OBJECT_ENCODING)
+            && ($clientVersion != Constants::FMS_OBJECT_ENCODING)
         ) {
-            throw new Amf\Exception\RuntimeException('Unknown Player Version ' . $clientVersion);
+            throw new RuntimeException('Unknown Player Version ' . $clientVersion);
         }
 
         $this->_bodies  = array();
@@ -118,7 +123,7 @@ class StreamRequest implements RequestInterface
      * - DATA Object
      *
      * @return \ZendAmf\Value\MessageHeader
-     * @throws Amf\Exception\RuntimeException
+     * @throws RuntimeException
      */
     public function readHeader()
     {
@@ -129,7 +134,7 @@ class StreamRequest implements RequestInterface
         try {
             $data = $this->_deserializer->readTypeMarker();
         } catch (\Exception $e) {
-            throw new Amf\Exception\RuntimeException('Unable to parse ' . $name . ' header data: ' . $e->getMessage() . ' '. $e->getLine(), 0, $e);
+            throw new RuntimeException('Unable to parse ' . $name . ' header data: ' . $e->getMessage() . ' '. $e->getLine(), 0, $e);
         }
 
         $header = new Value\MessageHeader($name, $mustRead, $data, $length);
@@ -140,7 +145,7 @@ class StreamRequest implements RequestInterface
      * Deserialize a message body from the input stream
      *
      * @return \ZendAmf\Value\MessageBody
-     * @throws Amf\Exception\RuntimeException
+     * @throws RuntimeException
      */
     public function readBody()
     {
@@ -151,11 +156,11 @@ class StreamRequest implements RequestInterface
         try {
             $data = $this->_deserializer->readTypeMarker();
         } catch (\Exception $e) {
-            throw new Amf\Exception\RuntimeException('Unable to parse ' . $targetURI . ' body data ' . $e->getMessage(), 0, $e);
+            throw new RuntimeException('Unable to parse ' . $targetURI . ' body data ' . $e->getMessage(), 0, $e);
         }
 
         // Check for AMF3 objectEncoding
-        if ($this->_deserializer->getObjectEncoding() == Amf\Constants::AMF3_OBJECT_ENCODING) {
+        if ($this->_deserializer->getObjectEncoding() == Constants::AMF3_OBJECT_ENCODING) {
             /*
              * When and AMF3 message is sent to the server it is nested inside
              * an AMF0 array called Content. The following code gets the object
@@ -166,7 +171,7 @@ class StreamRequest implements RequestInterface
             }
 
             // set the encoding so we return our message in AMF3
-            $this->_objectEncoding = Amf\Constants::AMF3_OBJECT_ENCODING;
+            $this->_objectEncoding = Constants::AMF3_OBJECT_ENCODING;
         }
 
         $body = new Value\MessageBody($targetURI, $responseURI, $data);

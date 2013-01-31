@@ -10,7 +10,7 @@
 
 namespace ZendAmf\Parser;
 
-use Zend\Loader\PluginBroker;
+use Zend\Loader\PluginClassLocator;
 
 /**
  * Loads a local class and executes the instantiation of that class.
@@ -31,7 +31,7 @@ final class TypeLoader
      */
     public static $classMap = array (
         'flex.messaging.messages.AcknowledgeMessage' => 'Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage',
-        'flex.messaging.messages.ErrorMessage'       => 'Zend\\Amf\\Value\\Messaging\\AsyncMessage',
+        'flex.messaging.messages.AsyncMessage'       => 'Zend\\Amf\\Value\\Messaging\\AsyncMessage',
         'flex.messaging.messages.CommandMessage'     => 'Zend\\Amf\\Value\\Messaging\\CommandMessage',
         'flex.messaging.messages.ErrorMessage'       => 'Zend\\Amf\\Value\\Messaging\\ErrorMessage',
         'flex.messaging.messages.RemotingMessage'    => 'Zend\\Amf\\Value\\Messaging\\RemotingMessage',
@@ -43,7 +43,7 @@ final class TypeLoader
      */
     protected static $_defaultClassMap = array(
         'flex.messaging.messages.AcknowledgeMessage' => 'Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage',
-        'flex.messaging.messages.ErrorMessage'       => 'Zend\\Amf\\Value\\Messaging\\AsyncMessage',
+        'flex.messaging.messages.AsyncMessage'       => 'Zend\\Amf\\Value\\Messaging\\AsyncMessage',
         'flex.messaging.messages.CommandMessage'     => 'Zend\\Amf\\Value\\Messaging\\CommandMessage',
         'flex.messaging.messages.ErrorMessage'       => 'Zend\\Amf\\Value\\Messaging\\ErrorMessage',
         'flex.messaging.messages.RemotingMessage'    => 'Zend\\Amf\\Value\\Messaging\\RemotingMessage',
@@ -51,16 +51,16 @@ final class TypeLoader
     );
 
     /**
-     * @var \Zend\Loader\PluginBroker
+     * @var \Zend\Loader\PluginClassLocator
      */
-    protected static $_resourceBroker = null;
+    protected static $_resourceLoader = null;
 
 
     /**
      * Load the mapped class type into a callback.
      *
      * @param  string $className
-     * @return object|false
+     * @return object|bool
      */
     public static function loadType($className)
     {
@@ -126,11 +126,11 @@ final class TypeLoader
     /**
      * Set loader for resource type handlers
      *
-     * @param \Zend\Loader\PluginBroker $loader
+     * @param \Zend\Loader\PluginClassLocator $loader
      */
-    public static function setResourceBroker(PluginBroker $broker)
+    public static function setResourceLoader(PluginClassLocator $loader)
     {
-        self::$_resourceBroker = $broker;
+        self::$_resourceLoader = $loader;
     }
 
     /**
@@ -141,10 +141,10 @@ final class TypeLoader
      */
     public static function getResourceParser($resource)
     {
-        if (self::$_resourceBroker) {
+        if (self::$_resourceLoader) {
             $type = preg_replace("/[^A-Za-z0-9_]/", " ", get_resource_type($resource));
             $type = str_replace(" ","", ucwords($type));
-            return self::$_resourceBroker->load($type);
+            return self::$_resourceLoader->load($type);
         }
         return false;
     }
@@ -158,8 +158,8 @@ final class TypeLoader
      */
     public static function handleResource($resource)
     {
-        if (!self::$_resourceBroker) {
-            throw new Exception\InvalidArgumentException('Unable to handle resources - resource plugin broker not set');
+        if (!self::$_resourceLoader) {
+            throw new Exception\InvalidArgumentException('Unable to handle resources - resource plugin loader not set');
         }
         try {
             while (is_resource($resource)) {

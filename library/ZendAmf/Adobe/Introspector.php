@@ -18,6 +18,7 @@ use Zend\Code\Reflection\ClassReflection;
 use Zend\Code\Reflection\PropertyReflection;
 use Zend\Server\Reflection;
 use Zend\Server\Reflection\ReflectionClass as ServerReflectionClass;
+use Zend\Permissions\Acl\Acl;
 
 /**
  * This class implements a service for generating AMF service descriptions as XML.
@@ -104,10 +105,10 @@ class Introspector
     /**
      * Authentication handler
      *
-     * @param  \Zend\Acl\Acl $acl
-     * @return unknown_type
+     * @param  \Zend\Permissions\Acl\Acl $acl
+     * @return bool
      */
-    public function initAcl(\Zend\Acl\Acl $acl)
+    public function initAcl(Acl $acl)
     {
         return false; // we do not need auth for this class
     }
