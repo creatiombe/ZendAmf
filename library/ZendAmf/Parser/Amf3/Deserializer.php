@@ -63,7 +63,7 @@ class Deserializer extends AbstractDeserializer
      *
      * @param  integer $typeMarker
      * @return mixed Whatever the corresponding PHP data type is
-     * @throws Parser\Exception\InvalidArgumentException for unidentified marker type
+     * @throws \ZendAmf\Parser\Exception\InvalidArgumentException for unidentified marker type
      */
     public function readTypeMarker($typeMarker = null)
     {
@@ -162,7 +162,7 @@ class Deserializer extends AbstractDeserializer
      * - modified-utf-8 = *OCTET
      *
      * @return String
-     * @throws Parser\Exception\OutOfBoundsException
+     * @throws \ZendAmf\Parser\Exception\OutOfBoundsException
      */
     public function readString()
     {
@@ -199,7 +199,7 @@ class Deserializer extends AbstractDeserializer
      * - date = 0x08 integer-data [ number-data ]
      *
      * @return DateTime
-     * @throws Parser\Exception\OutOfBoundsException
+     * @throws \ZendAmf\Parser\Exception\OutOfBoundsException
      */
     public function readDate()
     {
@@ -225,7 +225,7 @@ class Deserializer extends AbstractDeserializer
      * - array = 0x09 integer-data ( [ 1OCTET *amf3-data ] | [OCTET *amf3-data 1] | [ OCTET *amf-data ] )
      *
      * @return array
-     * @throws Parser\Exception\OutOfBoundsException
+     * @throws \ZendAmf\Parser\Exception\OutOfBoundsException
      */
     public function readArray()
     {
@@ -264,7 +264,7 @@ class Deserializer extends AbstractDeserializer
      *
      * @todo   Rather than using an array of traitsInfo create Zend_Amf_Value_TraitsInfo
      * @return object|array
-     * @throws Parser\Exception\OutOfBoundsException
+     * @throws \ZendAmf\Parser\Exception\OutOfBoundsException
      */
     public function readObject()
     {

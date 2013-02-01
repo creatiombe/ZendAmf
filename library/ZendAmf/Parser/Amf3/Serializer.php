@@ -27,6 +27,12 @@ use ZendAmf\Value;
 class Serializer extends AbstractSerializer
 {
     /**
+     * A constant empty string
+     * @var string
+     */
+    protected $_strEmpty = '';
+
+    /**
      * An array of reference objects per amf body
      * @var array
      */

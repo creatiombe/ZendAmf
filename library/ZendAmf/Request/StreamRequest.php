@@ -181,7 +181,7 @@ class StreamRequest implements RequestInterface
     /**
      * Return an array of the body objects that were found in the amf request.
      *
-     * @return array {target, response, length, content}
+     * @return \ZendAmf\Value\MessageBody[] {target, response, length, content}
      */
     public function getAmfBodies()
     {

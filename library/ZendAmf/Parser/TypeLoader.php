@@ -30,24 +30,24 @@ final class TypeLoader
      * @var array AMF class map
      */
     public static $classMap = array (
-        'flex.messaging.messages.AcknowledgeMessage' => 'Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage',
-        'flex.messaging.messages.AsyncMessage'       => 'Zend\\Amf\\Value\\Messaging\\AsyncMessage',
-        'flex.messaging.messages.CommandMessage'     => 'Zend\\Amf\\Value\\Messaging\\CommandMessage',
-        'flex.messaging.messages.ErrorMessage'       => 'Zend\\Amf\\Value\\Messaging\\ErrorMessage',
-        'flex.messaging.messages.RemotingMessage'    => 'Zend\\Amf\\Value\\Messaging\\RemotingMessage',
-        'flex.messaging.io.ArrayCollection'          => 'Zend\\Amf\\Value\\Messaging\\ArrayCollection',
+        'flex.messaging.messages.AcknowledgeMessage' => 'ZendAmf\\Value\\Messaging\\AcknowledgeMessage',
+        'flex.messaging.messages.AsyncMessage'       => 'ZendAmf\\Value\\Messaging\\AsyncMessage',
+        'flex.messaging.messages.CommandMessage'     => 'ZendAmf\\Value\\Messaging\\CommandMessage',
+        'flex.messaging.messages.ErrorMessage'       => 'ZendAmf\\Value\\Messaging\\ErrorMessage',
+        'flex.messaging.messages.RemotingMessage'    => 'ZendAmf\\Value\\Messaging\\RemotingMessage',
+        'flex.messaging.io.ArrayCollection'          => 'ZendAmf\\Value\\Messaging\\ArrayCollection',
     );
 
     /**
      * @var array Default class map
      */
     protected static $_defaultClassMap = array(
-        'flex.messaging.messages.AcknowledgeMessage' => 'Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage',
-        'flex.messaging.messages.AsyncMessage'       => 'Zend\\Amf\\Value\\Messaging\\AsyncMessage',
-        'flex.messaging.messages.CommandMessage'     => 'Zend\\Amf\\Value\\Messaging\\CommandMessage',
-        'flex.messaging.messages.ErrorMessage'       => 'Zend\\Amf\\Value\\Messaging\\ErrorMessage',
-        'flex.messaging.messages.RemotingMessage'    => 'Zend\\Amf\\Value\\Messaging\\RemotingMessage',
-        'flex.messaging.io.ArrayCollection'          => 'Zend\\Amf\\Value\\Messaging\\ArrayCollection',
+        'flex.messaging.messages.AcknowledgeMessage' => 'ZendAmf\\Value\\Messaging\\AcknowledgeMessage',
+        'flex.messaging.messages.AsyncMessage'       => 'ZendAmf\\Value\\Messaging\\AsyncMessage',
+        'flex.messaging.messages.CommandMessage'     => 'ZendAmf\\Value\\Messaging\\CommandMessage',
+        'flex.messaging.messages.ErrorMessage'       => 'ZendAmf\\Value\\Messaging\\ErrorMessage',
+        'flex.messaging.messages.RemotingMessage'    => 'ZendAmf\\Value\\Messaging\\RemotingMessage',
+        'flex.messaging.io.ArrayCollection'          => 'ZendAmf\\Value\\Messaging\\ArrayCollection',
     );
 
     /**

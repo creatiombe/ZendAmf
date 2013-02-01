@@ -257,7 +257,7 @@ class Deserializer extends AbstractDeserializer
                 $returnObject->$key = $value;
             }
         }
-        if($returnObject instanceof Amf\Value\Messaging\ArrayCollection) {
+        if($returnObject instanceof \ZendAmf\Value\Messaging\ArrayCollection) {
             $returnObject = get_object_vars($returnObject);
         }
         return $returnObject;
