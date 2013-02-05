@@ -318,11 +318,15 @@ class Serializer extends AbstractSerializer
         // arrays aren't reference here but still counted
         $this->_referenceObjects[] = $array;
 
+        reset($array);
+        $firstIndex  = key($array);
+        $zeroIndexed = ($firstIndex === 0);
+
         // have to seperate mixed from numberic keys.
         $numeric = array();
         $string  = array();
         foreach ($array as $key => $value) {
-            if (is_int($key)) {
+            if ($zeroIndexed && is_int($key)) {
                 $numeric[] = $value;
             } else {
                 $string[$key] = $value;
