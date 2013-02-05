@@ -10,7 +10,8 @@
     "homepage": "http://packages.zendframework.com/",
     "autoload": {
         "psr-0": {
-            "ZendAmf": "library/"
+            "ZendAmf": "library/",
+            "ZendAmfTest\\": "tests/"
         }
     },
     "repositories": [
@@ -21,6 +22,13 @@
     ],
     "require": {
         "php": ">=5.3.3",
+        "zendframework/zend-authentication": ">=2.0.0",
+        "zendframework/zend-db": ">=2.0.0",
+        "zendframework/zend-loader": ">=2.0.0",
+        "zendframework/zend-permissions-acl": ">=2.0.0",
+        "zendframework/zend-server": ">=2.0.0"
+    },
+    "require-dev": {
         "zendframework/zendframework": "dev-master"
     }
 }
