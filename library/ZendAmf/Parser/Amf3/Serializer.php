@@ -303,7 +303,7 @@ class Serializer extends AbstractSerializer
 
         $this->writeInteger(0x01);
         // write time to stream minus milliseconds
-        $this->_stream->writeDouble($date->getTimestamp());
+        $this->_stream->writeDouble($date->getTimestamp() * 1000);
         return $this;
     }
 
@@ -358,7 +358,7 @@ class Serializer extends AbstractSerializer
      */
     protected function writeObjectReference(&$object, $objectByVal = false)
     {
-        $ref = array_search($object, $this->_referenceObjects,true);
+        $ref = array_search($object, $this->_referenceObjects, true);
 
         // quickly handle object references
         if ($ref !== false){

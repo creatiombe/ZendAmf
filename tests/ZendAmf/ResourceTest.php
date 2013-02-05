@@ -40,7 +40,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
         unset($this->_server);
     }
 
-    protected function _callService($method, $class = 'ZendTest\\Amf\\TestAsset\\testclass')
+    protected function _callService($method, $class = 'ZendAmfTest\\TestAsset\\testclass')
     {
         $request = new \ZendAmf\Request\StreamRequest();
         $request->setObjectEncoding(0x03);
@@ -72,8 +72,8 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCtxLoader()
     {
-        $this->markTestSkipped('Plugin loader implementation needs to be revisited');
-        Parser\TypeLoader::addResourceDirectory("Test\\Resource", __DIR__ . "/TestAsset/Resources");
+        Parser\TypeLoader::getResourceLoader()
+            ->registerPlugin('StreamContext', 'ZendAmfTest\TestAsset\Resources\StreamContext');
         $resp = $this->_callService("returnCtx");
         $this->assertContains("Accept-language:", $resp->getResponse());
         $this->assertContains("foo=bar", $resp->getResponse());
@@ -85,8 +85,7 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCtx()
     {
-        $this->markTestSkipped('Plugin loader implementation needs to be revisited');
-        Parser\TypeLoader::setResourceLoader(new TestAsset\TestResourceLoader("2"));
+        Parser\TypeLoader::setResourceLoader(new TestAsset\TestResourceLoader(2));
         $resp = $this->_callService("returnCtx");
         $this->assertContains("Accept-language:", $resp->getResponse());
         $this->assertContains("foo=bar", $resp->getResponse());
@@ -98,10 +97,8 @@ class ResourceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCtxNoParse()
     {
-        $this->markTestSkipped('Plugin loader implementation needs to be revisited');
-        Parser\TypeLoader::setResourceLoader(new TestAsset\TestResourceLoader("3"));
+        Parser\TypeLoader::setResourceLoader(new TestAsset\TestResourceLoader(3));
         $this->setExpectedException('ZendAmf\Exception\RuntimeException', 'Could not call parse()');
         $resp = $this->_callService("returnCtx");
     }
-
 }

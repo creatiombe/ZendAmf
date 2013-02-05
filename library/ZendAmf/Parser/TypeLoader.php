@@ -55,7 +55,6 @@ final class TypeLoader
      */
     protected static $_resourceLoader = null;
 
-
     /**
      * Load the mapped class type into a callback.
      *
@@ -64,7 +63,7 @@ final class TypeLoader
      */
     public static function loadType($className)
     {
-        $class    = self::getMappedClassName($className);
+        $class = static::getMappedClassName($className);
         if(!$class) {
             $class = str_replace('.', '\\', $className);
         }
@@ -82,13 +81,13 @@ final class TypeLoader
      */
     public static function getMappedClassName($className)
     {
-        $mappedName = array_search($className, self::$classMap);
+        $mappedName = array_search($className, static::$classMap);
 
         if ($mappedName) {
             return $mappedName;
         }
 
-        $mappedName = array_search($className, array_flip(self::$classMap));
+        $mappedName = array_search($className, array_flip(static::$classMap));
 
         if ($mappedName) {
             return $mappedName;
@@ -110,7 +109,7 @@ final class TypeLoader
      */
     public static function setMapping($asClassName, $phpClassName)
     {
-        self::$classMap[$asClassName] = $phpClassName;
+        static::$classMap[$asClassName] = $phpClassName;
     }
 
     /**
@@ -120,7 +119,17 @@ final class TypeLoader
      */
     public static function resetMap()
     {
-        self::$classMap = self::$_defaultClassMap;
+        static::$classMap = static::$_defaultClassMap;
+    }
+
+    /**
+     * Get loader for resource type handlers.
+     * 
+     * @return \Zend\Loader\PluginClassLocator
+     */
+    public static function getResourceLoader()
+    {
+        return static::$_resourceLoader;
     }
 
     /**
@@ -130,7 +139,7 @@ final class TypeLoader
      */
     public static function setResourceLoader(PluginClassLocator $loader)
     {
-        self::$_resourceLoader = $loader;
+        static::$_resourceLoader = $loader;
     }
 
     /**
@@ -141,10 +150,10 @@ final class TypeLoader
      */
     public static function getResourceParser($resource)
     {
-        if (self::$_resourceLoader) {
+        if (static::$_resourceLoader) {
             $type = preg_replace("/[^A-Za-z0-9_]/", " ", get_resource_type($resource));
             $type = str_replace(" ","", ucwords($type));
-            return self::$_resourceLoader->load($type);
+            return static::$_resourceLoader->load($type);
         }
         return false;
     }
@@ -158,12 +167,19 @@ final class TypeLoader
      */
     public static function handleResource($resource)
     {
-        if (!self::$_resourceLoader) {
+        if (!static::$_resourceLoader) {
             throw new Exception\InvalidArgumentException('Unable to handle resources - resource plugin loader not set');
         }
         try {
             while (is_resource($resource)) {
-                $parser   = self::getResourceParser($resource);
+                $resclass = static::getResourceParser($resource);
+                if (!$resclass) {
+                    throw new Exception\RuntimeException('Can not serialize resource type: '. get_resource_type($resource));
+                }
+                $parser = new $resclass;
+                if (!is_callable(array($parser, 'parse'))) {
+                    throw new Exception\RuntimeException("Could not call parse() method on class $resclass");
+                }
                 $resource = $parser->parse($resource);
             }
             return $resource;

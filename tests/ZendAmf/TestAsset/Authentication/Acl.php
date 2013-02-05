@@ -10,7 +10,7 @@
 
 namespace ZendAmfTest\TestAsset\Authentication;
 
-use Zend\Acl\Acl as ZendAcl;
+use Zend\Permissions\Acl\Acl as ZendAcl;
 
 class Acl
 {

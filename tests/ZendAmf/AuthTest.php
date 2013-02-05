@@ -10,12 +10,12 @@
 
 namespace ZendAmfTest;
 
-use Zend\Acl;
+use Zend\Permissions\Acl;
 use ZendAmf\Value;
 use ZendAmf\Value\Messaging;
 use ZendAmf\Request;
-use Zend\Acl\Role;
-use Zend\Amf;
+use Zend\Permissions\Acl\Role;
+use ZendAmf as Amf;
 use Zend\Authentication;
 
 /**
@@ -46,7 +46,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
     {
         unset($this->_server);
     }
-    protected function _addServiceCall($request, $class = 'ZendTest\\Amf\\TestAsset\\Authentication\\testclass', $method = 'hello')
+    protected function _addServiceCall($request, $class = 'ZendAmfTest\\TestAsset\\Authentication\\testclass', $method = 'hello')
     {
         $data[] = "12345";
         $this->_server->setClass($class);
@@ -73,7 +73,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         $request->addAmfBody($cmdBody);
     }
 
-    protected function _callService($class = 'ZendTest\\Amf\\TestAsset\\Authentication\\testclass', $method = 'hello')
+    protected function _callService($class = 'ZendAmfTest\\TestAsset\\Authentication\\testclass', $method = 'hello')
     {
         $request = new Request\StreamRequest();
         $request->setObjectEncoding(0x03);
@@ -84,7 +84,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         return $responseBody[0]->getData();
     }
 
-    protected function _callServiceAuth($username, $password, $class = 'ZendTest\\Amf\\TestAsset\\Authentication\\testclass', $method = 'hello')
+    protected function _callServiceAuth($username, $password, $class = 'ZendAmfTest\\TestAsset\\Authentication\\testclass', $method = 'hello')
     {
         $request = new Request\StreamRequest();
         $request->setObjectEncoding(0x03);
@@ -180,7 +180,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         $this->_server->setAuth(new TestAsset\Authentication\RightPassword("testuser", "testrole"));
         $this->_acl->addRole(new Role\GenericRole("testrole"));
         $this->_server->setAcl($this->_acl);
-        $resp = $this->_callServiceAuth("testuser", "", 'ZendTest\\Amf\\TestAsset\\Authentication\\NoAcl');
+        $resp = $this->_callServiceAuth("testuser", "", 'ZendAmfTest\\TestAsset\\Authentication\\NoAcl');
         $this->assertTrue($resp[0]->getData() instanceof Messaging\AcknowledgeMessage);
         $this->assertTrue(isset($resp[1]));
         $this->assertTrue(is_object($resp[1]));
@@ -197,7 +197,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         $this->_acl->addRole(new Role\GenericRole("testrole"));
         $this->_acl->addRole(new Role\GenericRole("testrole2"));
         $this->_server->setAcl($this->_acl);
-        $resp = $this->_callServiceAuth("testuser", "", 'ZendTest\\Amf\\TestAsset\\Authentication\\Acl');
+        $resp = $this->_callServiceAuth("testuser", "", 'ZendAmfTest\\TestAsset\\Authentication\\Acl');
         $this->assertTrue($resp[0]->getData() instanceof Messaging\AcknowledgeMessage);
         $this->assertContains("hello", $resp[1]->getData());
     }
@@ -209,7 +209,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         $this->_acl->addRole(new Role\GenericRole("testrole"));
         $this->_acl->addRole(new Role\GenericRole("testrole2"));
         $this->_server->setAcl($this->_acl);
-        $resp = $this->_callServiceAuth("testuser", "", 'ZendTest\\Amf\\TestAsset\\Authentication\\Acl');
+        $resp = $this->_callServiceAuth("testuser", "", 'ZendAmfTest\\TestAsset\\Authentication\\Acl');
         $this->assertTrue($resp[0]->getData() instanceof Messaging\AcknowledgeMessage);
         $data = $resp[1]->getData();
         $this->assertTrue($data instanceof Messaging\ErrorMessage);
@@ -223,7 +223,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
         $this->_acl->addRole(new Role\GenericRole("testrole"));
         $this->_acl->addRole(new Role\GenericRole("testrole2"));
         $this->_server->setAcl($this->_acl);
-        $resp = $this->_callServiceAuth("testuser", "", 'ZendTest\\Amf\\TestAsset\\Authentication\\Acl', 'hello2');
+        $resp = $this->_callServiceAuth("testuser", "", 'ZendAmfTest\\TestAsset\\Authentication\\Acl', 'hello2');
         $this->assertTrue($resp[0]->getData() instanceof Messaging\AcknowledgeMessage);
         $this->assertContains("hello", $resp[1]->getData());
     }

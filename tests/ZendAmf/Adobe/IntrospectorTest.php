@@ -25,33 +25,33 @@ class IntrospectorTest extends \PHPUnit_Framework_TestCase
 
     public function testIntrospectionDoesNotIncludeConstructor()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         $this->assertNotContains('__construct', $xml);
     }
 
     public function testIntrospectionDoesNotIncludeMagicMethods()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         $this->assertNotContains('__get', $xml);
     }
 
     public function testIntrospectionContainsPublicPropertiesOfReturnClassTypes()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
-        $this->assertRegexp('/<type[^>]*(name="' . preg_quote('ZendTest\\Amf\\TestAsset\\IntrospectorTestCustomType') . '")/', $xml, $xml);
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
+        $this->assertRegexp('/<type[^>]*(name="' . preg_quote('ZendAmfTest\\TestAsset\\IntrospectorTestCustomType') . '")/', $xml, $xml);
         $this->assertRegexp('/<property[^>]*(name="foo")/', $xml, $xml);
         $this->assertRegexp('/<property[^>]*(type="string")/', $xml, $xml);
     }
 
     public function testIntrospectionDoesNotContainNonPublicPropertiesOfReturnClassTypes()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         $this->assertNotRegexp('/<property[^>]*(name="_bar")/', $xml, $xml);
     }
 
     public function testIntrospectionContainsPublicMethods()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         $this->assertRegexp('/<operation[^>]*(name="foobar")/', $xml, $xml);
         $this->assertRegexp('/<operation[^>]*(name="barbaz")/', $xml, $xml);
         $this->assertRegexp('/<operation[^>]*(name="bazbat")/', $xml, $xml);
@@ -59,7 +59,7 @@ class IntrospectorTest extends \PHPUnit_Framework_TestCase
 
     public function testIntrospectionContainsOperationForEachPrototypeOfAPublicMethod()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         $this->assertEquals(4, substr_count($xml, 'name="foobar"'));
         $this->assertEquals(1, substr_count($xml, 'name="barbaz"'));
         $this->assertEquals(1, substr_count($xml, 'name="bazbat"'));
@@ -77,9 +77,9 @@ class IntrospectorTest extends \PHPUnit_Framework_TestCase
 
     public function testMissingPropertyDocblockInTypedClassShouldReportTypeAsUnknown()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         if (!preg_match('/(<property[^>]*(name="baz")[^>]*>)/', $xml, $matches)) {
-            $this->fail('Baz property of ZendTest.Amf.TestAsset.IntrospectorTestCustomType not found');
+            $this->fail('Baz property of ZendAmfTest.TestAsset.IntrospectorTestCustomType not found');
         }
         $node = $matches[1];
         $this->assertContains('type="Unknown"', $node, $node);
@@ -87,9 +87,9 @@ class IntrospectorTest extends \PHPUnit_Framework_TestCase
 
     public function testPropertyDocblockWithoutAnnotationInTypedClassShouldReportTypeAsUnknown()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         if (!preg_match('/(<property[^>]*(name="bat")[^>]*>)/', $xml, $matches)) {
-            $this->fail('Bat property of ZendTest.Amf.TestAsset.IntrospectorTestCustomType not found');
+            $this->fail('Bat property of ZendAmfTest.TestAsset.IntrospectorTestCustomType not found');
         }
         $node = $matches[1];
         $this->assertContains('type="Unknown"', $node, $node);
@@ -97,7 +97,7 @@ class IntrospectorTest extends \PHPUnit_Framework_TestCase
 
     public function testTypedClassWithExplicitTypeShouldReportAsThatType()
     {
-        $xml = $this->introspector->introspect('ZendTest.Amf.TestAsset.IntrospectorTest');
+        $xml = $this->introspector->introspect('ZendAmfTest.TestAsset.IntrospectorTest');
         $this->assertRegexp('/<type[^>]*(name="explicit")/', $xml, $xml);
     }
 }

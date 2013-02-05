@@ -10,7 +10,7 @@
 
 namespace ZendAmfTest;
 
-use Zend\Amf;
+use ZendAmf as Amf;
 use ZendAmf\Parser;
 use ZendAmf\Value;
 use ZendAmf\Request;
@@ -38,8 +38,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->_server->setProduction(false);
         Parser\TypeLoader::resetMap();
         Session\Container::setDefaultManager(null);
-        $config = new Session\Configuration\StandardConfiguration(array(
-            'class'   => 'Zend\\Session\\Configuration\\StandardConfiguration',
+        $config = new Session\Config\StandardConfig(array(
+            'class'   => 'Zend\\Session\\Config\\StandardConfig',
             'storage' => 'Zend\\Session\\Storage\\ArrayStorage',
         ));
         $this->session = new \ZendTest\Session\TestAsset\TestManager($config);
@@ -79,7 +79,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetClass()
     {
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass', 'test');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass', 'test');
         $methods = $this->_server->listMethods();
         $this->assertTrue(in_array('test.test1', $methods));
         $this->assertTrue(in_array('test.test2', $methods));
@@ -108,8 +108,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetClassShouldRaiseExceptionOnDuplicateMethodName()
     {
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass', 'tc');
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclassPrivate', 'tc');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass', 'tc');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclassPrivate', 'tc');
     }
 
     /**
@@ -136,10 +136,10 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     public function testAddFunction()
     {
 
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction', 'test');
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction', 'test');
 
         $methods = $this->_server->listMethods();
-        $this->assertTrue(in_array('test.ZendTest\\Amf\\TestAsset\\Server\\testFunction', $methods), var_export($methods, 1));
+        $this->assertTrue(in_array('test.ZendAmfTest\\TestAsset\\Server\\testFunction', $methods), var_export($methods, 1));
 
         try {
             $this->_server->addFunction('nosuchfunction');
@@ -151,15 +151,15 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
         $server->addFunction(
             array(
-                'ZendTest\\Amf\\TestAsset\\Server\\testFunction',
-                'ZendTest\\Amf\\TestAsset\\Server\\testFunction2',
+                'ZendAmfTest\\TestAsset\\Server\\testFunction',
+                'ZendAmfTest\\TestAsset\\Server\\testFunction2',
             ),
             'zsr'
         );
 
         $methods = $server->listMethods();
-        $this->assertTrue(in_array('zsr.ZendTest\\Amf\\TestAsset\\Server\\testFunction', $methods));
-        $this->assertTrue(in_array('zsr.ZendTest\\Amf\\TestAsset\\Server\\testFunction2', $methods));
+        $this->assertTrue(in_array('zsr.ZendAmfTest\\TestAsset\\Server\\testFunction', $methods));
+        $this->assertTrue(in_array('zsr.ZendAmfTest\\TestAsset\\Server\\testFunction2', $methods));
     }
 
     /**
@@ -175,8 +175,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddFunctionShouldRaiseExceptionOnDuplicateMethodName()
     {
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction', 'tc');
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction', 'tc');
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction', 'tc');
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction', 'tc');
     }
 
     /**
@@ -188,8 +188,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "12345";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
-        $newBody = new Value\MessageBody("ZendTest\\Amf\\TestAsset\\Server\\testclass.test1","/1",$data);
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
+        $newBody = new Value\MessageBody("ZendAmfTest\\TestAsset\\Server\\testclass.test1","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
         $request->setObjectEncoding(0x00);
@@ -206,8 +206,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data = array('foo', 'bar');
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction');
-        $newBody = new Value\MessageBody("ZendTest\\Amf\\TestAsset\\Server\\testFunction","/1",$data);
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction');
+        $newBody = new Value\MessageBody("ZendAmfTest\\TestAsset\\Server\\testFunction","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
         $request->setObjectEncoding(0x00);
@@ -231,8 +231,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "12345";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
-        $newBody = new Value\MessageBody("ZendTest\\Amf\\TestAsset\\Server\\testclass.test1","/1",$data);
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
+        $newBody = new Value\MessageBody("ZendAmfTest\\TestAsset\\Server\\testclass.test1","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
         $request->setObjectEncoding(0x03);
@@ -256,8 +256,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data = array('foo', 'bar');
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction');
-        $newBody = new Value\MessageBody("ZendTest\\Amf\\TestAsset\\Server\\testFunction","/1",$data);
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction');
+        $newBody = new Value\MessageBody("ZendAmfTest\\TestAsset\\Server\\testFunction","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
         $request->setObjectEncoding(0x03);
@@ -279,11 +279,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "12345";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'test1';
-        $message->source = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body = $data;
         // create a mock message body to place th remoting message inside
         $newBody = new Value\MessageBody(null,"/1",$message);
@@ -373,7 +373,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "12345";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
         $newBody = new Value\MessageBody("bogus","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
@@ -431,8 +431,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testClassMap()
     {
-        $this->_server->setClassMap('controller.test', 'ZendTest\\Amf\\TestAsset\\Server\\testclass');
-        $className = Parser\TypeLoader::getMappedClassName('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClassMap('controller.test', 'ZendAmfTest\\TestAsset\\Server\\testclass');
+        $className = Parser\TypeLoader::getMappedClassName('ZendAmfTest\\TestAsset\\Server\\testclass');
         $this->assertEquals('controller.test', $className);
     }
 
@@ -440,7 +440,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "12345";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
@@ -475,12 +475,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data = array();
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'throwException';
-        $message->source    = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source    = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body      = $data;
 
         // create a mock message body to place th remoting message inside
@@ -511,13 +511,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data = array();
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass')
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass')
                       ->setProduction(true);
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'throwException';
-        $message->source    = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source    = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body      = $data;
 
         // create a mock message body to place th remoting message inside
@@ -548,12 +548,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "baz";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass', '', 'foo', 'bar');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass', '', 'foo', 'bar');
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'checkArgv';
-        $message->source    = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source    = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body      = $data;
 
         // create a mock message body to place th remoting message inside
@@ -570,7 +570,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $found  = false;
         foreach ($bodies as $body) {
             $data  = $body->getData();
-            if ('Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage' == get_class($data)) {
+            if ('ZendAmf\\Value\\Messaging\\AcknowledgeMessage' == get_class($data)) {
                 if ('baz:foo:bar' == $data->body) {
                     $found = true;
                     break;
@@ -584,12 +584,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "testing";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'checkStaticUsage';
-        $message->source    = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source    = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body      = $data;
 
         // create a mock message body to place th remoting message inside
@@ -606,7 +606,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $found  = false;
         foreach ($bodies as $body) {
             $data  = $body->getData();
-            if ('Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage' == get_class($data)) {
+            if ('ZendAmf\\Value\\Messaging\\AcknowledgeMessage' == get_class($data)) {
                 if ('testing' == $data->body) {
                     $found = true;
                     break;
@@ -621,11 +621,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         // serialize the data to an AMF output stream
         $data[] = 'foo';
         $data[] = 'bar';
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction');
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction');
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
-        $message->operation = 'ZendTest\\Amf\\TestAsset\\Server\\testFunction';
+        $message->operation = 'ZendAmfTest\\TestAsset\\Server\\testFunction';
         $message->source    = null;
         $message->body      = $data;
 
@@ -643,7 +643,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $found  = false;
         foreach ($bodies as $body) {
             $data  = $body->getData();
-            if ('Zend\\Amf\\Value\\Messaging\\AcknowledgeMessage' == get_class($data)) {
+            if ('ZendAmf\\Value\\Messaging\\AcknowledgeMessage' == get_class($data)) {
                 if ('bar: foo' == $data->body) {
                     $found = true;
                     break;
@@ -657,12 +657,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         // serialize the data to an AMF output stream
         $data[] = "baz";
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclassPrivate');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclassPrivate');
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'test1';
-        $message->source    = 'ZendTest\\Amf\\TestAsset\\Server\\testclassPrivate';
+        $message->source    = 'ZendAmfTest\\TestAsset\\Server\\testclassPrivate';
         $message->body      = $data;
 
         // create a mock message body to place th remoting message inside
@@ -679,7 +679,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $found  = false;
         foreach ($bodies as $body) {
             $data  = $body->getData();
-            if ('Zend\\Amf\\Value\\Messaging\\ErrorMessage' == get_class($data)) {
+            if ('ZendAmf\\Value\\Messaging\\ErrorMessage' == get_class($data)) {
                 if (strstr($data->faultString, 'Error instantiating class')) {
                     $found = true;
                     break;
@@ -691,7 +691,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testNotPassingRequestToHandleShouldResultInServerCreatingRequest()
     {
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
         ob_start();
         $result  = $this->_server->handle();
         $content = ob_get_clean();
@@ -704,7 +704,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetRequestShouldAllowValidStringClassNames()
     {
-        $this->_server->setRequest('Zend\\Amf\\Request\\StreamRequest');
+        $this->_server->setRequest('ZendAmf\\Request\\StreamRequest');
         $request = $this->_server->getRequest();
         $this->assertTrue($request instanceof Request\StreamRequest);
         $this->assertFalse($request instanceof Request\HttpRequest);
@@ -715,7 +715,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetRequestShouldRaiseExceptionOnInvalidStringClassName()
     {
-        @$this->_server->setRequest('ZendTest\\Amf\\ServerTest\\BogusRequest');
+        @$this->_server->setRequest('ZendAmfTest\\ServerTest\\BogusRequest');
     }
 
     public function testSetRequestShouldAllowValidRequestObjects()
@@ -736,7 +736,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetResponseShouldAllowValidStringClassNames()
     {
-        $this->_server->setResponse('Zend\\Amf\\Response\\StreamResponse');
+        $this->_server->setResponse('ZendAmf\\Response\\StreamResponse');
         $response = $this->_server->getResponse();
         $this->assertTrue($response instanceof Response\StreamResponse);
         $this->assertFalse($response instanceof Response\HttpResponse);
@@ -747,7 +747,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetResponseShouldRaiseExceptionOnInvalidStringClassName()
     {
-        @$this->_server->setResponse('ZendTest\\Amf\\ServerTest\\BogusResponse');
+        @$this->_server->setResponse('ZendAmfTest\\ServerTest\\BogusResponse');
     }
 
     public function testSetResponseShouldAllowValidResponseObjects()
@@ -768,9 +768,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFunctionsShouldReturnArrayOfDispatchables()
     {
-        $this->_server->addFunction('ZendTest\\Amf\\TestAsset\\Server\\testFunction', 'tf')
-                      ->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass', 'tc')
-                      ->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclassPrivate', 'tcp');
+        $this->_server->addFunction('ZendAmfTest\\TestAsset\\Server\\testFunction', 'tf')
+                      ->setClass('ZendAmfTest\\TestAsset\\Server\\testclass', 'tc')
+                      ->setClass('ZendAmfTest\\TestAsset\\Server\\testclassPrivate', 'tcp');
         $functions = $this->_server->getFunctions();
         $this->assertTrue(is_array($functions));
         $this->assertTrue(0 < count($functions));
@@ -806,11 +806,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
             // serialize the data to an AMF output stream
         $data[] = array('item1', 'item2');
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'testSingleArrayParamater';
-        $message->source = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body = $data;
         // create a mock message body to place th remoting message inside
         $newBody = new Value\MessageBody(null,"/1",$message);
@@ -839,8 +839,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     public function testSingleArrayParamaterAMF0()
     {
         $data[] = array('item1', 'item2');
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
-        $newBody = new Value\MessageBody("ZendTest\\Amf\\TestAsset\\Server\\testclass.testSingleArrayParamater","/1",$data);
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
+        $newBody = new Value\MessageBody("ZendAmfTest\\TestAsset\\Server\\testclass.testSingleArrayParamater","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
         $request->setObjectEncoding(0x00);
@@ -862,11 +862,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         // serialize the data to an AMF output stream
         $data[] = array('item1', 'item2');
         $data[] = array('item3', 'item4');
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'testMultiArrayParamater';
-        $message->source = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body = $data;
         // create a mock message body to place th remoting message inside
         $newBody = new Value\MessageBody(null,"/1",$message);
@@ -896,8 +896,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         $data[] = array('item1', 'item2');
         $data[] = array('item3', 'item4');
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
-        $newBody = new Value\MessageBody("ZendTest\\Amf\\TestAsset\\Server\\testclass.testMultiArrayParamater","/1",$data);
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
+        $newBody = new Value\MessageBody("ZendAmfTest\\TestAsset\\Server\\testclass.testMultiArrayParamater","/1",$data);
         $request = new Request\StreamRequest();
         $request->addAmfBody($newBody);
         $request->setObjectEncoding(0x00);
@@ -918,11 +918,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         // serialize the data to an AMF output stream
         $data[] = array('item1', 'item2');
         $data[] = array('item3', 'item4');
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testclass');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testclass');
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'testMultiArrayParamater';
-        $message->source = 'ZendTest\\Amf\\TestAsset\\Server\\testclass';
+        $message->source = 'ZendAmfTest\\TestAsset\\Server\\testclass';
         $message->body = $data;
         // create a mock message body to place th remoting message inside
         $newBody = new Value\MessageBody(null,"/1",$message);
@@ -952,13 +952,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     public function testSessionAmf3()
     {
         $this->session->start();
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testSession');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testSession');
         $this->_server->setSession();
 
         // create a mock remoting message
         $message = new Messaging\RemotingMessage();
         $message->operation = 'getCount';
-        $message->source = 'ZendTest\\Amf\\TestAsset\\Server\\testSession';
+        $message->source = 'ZendAmfTest\\TestAsset\\Server\\testSession';
         $message->body = array();
         // create a mock message body to place th remoting message inside
         $newBody = new Value\MessageBody(null,"/1", $message);
@@ -985,11 +985,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     /* See ZF-7102 */
     public function testCtorExcection()
     {
-        $this->_server->setClass('ZendTest\\Amf\\TestAsset\\Server\\testException');
+        $this->_server->setClass('ZendAmfTest\\TestAsset\\Server\\testException');
         $this->_server->setProduction(false);
         $message = new Messaging\RemotingMessage();
         $message->operation = 'hello';
-        $message->source = 'ZendTest\\Amf\\TestAsset\\Server\\testException';
+        $message->source = 'ZendAmfTest\\TestAsset\\Server\\testException';
         $message->body = array("123");
         // create a mock message body to place th remoting message inside
         $newBody = new Value\MessageBody(null,"/1", $message);
@@ -1004,28 +1004,28 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertContains("Oops, exception!", $response[0]->getData()->faultString);
     }
 
-    public function testAcceptsStringArgumentToSetBroker()
+    public function testAcceptsStringArgumentToSetLoader()
     {
-        $this->_server->setBroker('Zend\View\HelperBroker');
-        $this->assertInstanceOf('Zend\View\HelperBroker', $this->_server->getBroker());
+        $this->_server->setLoader('Zend\Loader\PluginClassLoader');
+        $this->assertInstanceOf('Zend\Loader\PluginClassLoader', $this->_server->getLoader());
     }
 
-    public function testAcceptsBrokerObjectToSetBroker()
+    public function testAcceptsLoaderObjectToSetLoader()
     {
-        $broker = new \Zend\View\HelperBroker();
-        $this->_server->setBroker($broker);
-        $this->assertSame($broker, $this->_server->getBroker());
+        $loader = new \Zend\Loader\PluginClassLoader();
+        $this->_server->setLoader($loader);
+        $this->assertSame($loader, $this->_server->getLoader());
     }
 
-    public function testRaisesExceptionOnNonClassStringBrokerArgument()
+    public function testRaisesExceptionOnNonClassStringLoaderArgument()
     {
         $this->setExpectedException('ZendAmf\Exception\ExceptionInterface', 'could not resolve');
-        $this->_server->setBroker('__foo__');
+        $this->_server->setLoader('__foo__');
     }
 
-    public function testRaisesExceptionOnNonBrokerObjectArgument()
+    public function testRaisesExceptionOnNonLoaderObjectArgument()
     {
         $this->setExpectedException('ZendAmf\Exception\ExceptionInterface', 'implement');
-        $this->_server->setBroker($this);
+        $this->_server->setLoader($this);
     }
 }

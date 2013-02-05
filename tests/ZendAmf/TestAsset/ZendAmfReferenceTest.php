@@ -8,18 +8,24 @@
  * @package   Zend_Amf
  */
 
-namespace ZendAmfTest\TestAsset\Resources;
-
-/**
- * @category   Zend
- * @package    Zend_Amf
- * @subpackage UnitTests
+/*
+ * Used to test recursive cyclic references in the serializer.
+ *@group ZF-6205
  */
-class StreamContext
+class ReferenceTest
 {
-    public function parse($resource)
+    public function getReference()
     {
-        return stream_context_get_options($resource);
+        $o = new TestObject();
+        $o->recursive = new TestObject();
+        $o->recursive->recursive = $o;
+        return $o;
     }
 }
-
+/**
+ * @see ReferenceTest
+ */
+class TestObject
+{
+    public $recursive;
+}

@@ -42,7 +42,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         $this->_originaltimezone = date_default_timezone_get();
         date_default_timezone_set("America/Chicago");
-        \Zend\Locale\Locale::setFallback('en');
         Parser\TypeLoader::resetMap();
         $this->_request = new \ZendAmf\Request\StreamRequest();
     }
@@ -588,7 +587,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     public function testAmf0TypedObjecDeserializedToNativePHPObject()
     {
-        Parser\TypeLoader::setMapping("ContactVO","ZendTest\\Amf\\TestAsset\\Contact");
+        Parser\TypeLoader::setMapping("ContactVO","ZendAmfTest\\TestAsset\\Contact");
         $myRequest = file_get_contents(__DIR__ .'/TestAsset/Request/mock/typedObjectAmf0Request.bin');
         // send the mock object request to be deserialized
         $this->_request->initialize($myRequest);

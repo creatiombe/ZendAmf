@@ -256,9 +256,11 @@ class Server implements ServerDefinition
             }
             if (method_exists($object, 'initAcl')) {
                 // if initAcl returns false, no ACL check
-                if ($isObject && $object->initAcl($this->_acl)) {
-                    return true;
-                } elseif ($class::initAcl($this->_acl)) {
+                if ($isObject) {
+                    if (!$object->initAcl($this->_acl)) {
+                        return true;
+                    }
+                } elseif (!$class::initAcl($this->_acl)) {
                     return true;
                 }
             }
@@ -349,10 +351,8 @@ class Server implements ServerDefinition
                 if (class_exists($className, false) && !isset($this->_classAllowed[$className])) {
                     throw new Exception\RuntimeException('Can not call "' . $className . '" - use setClass()');
                 }
-                try {
-                    $this->getLoader()->load($className);
-                } catch (\Exception $e) {
-                    throw new Exception\RuntimeException('Class "' . $className . '" does not exist: '.$e->getMessage(), 0, $e);
+                if (!$this->getLoader()->load($className)) {
+                    throw new Exception\RuntimeException('Class "' . $className . '" does not exist');
                 }
                 // Add the new loaded class to the server.
                 $this->setClass($className, $source);

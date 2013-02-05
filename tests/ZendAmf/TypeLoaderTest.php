@@ -27,7 +27,7 @@ class TypeloaderTest extends \PHPUnit_Framework_TestCase
     public function testGetMappedClassNameForClient()
     {
         $class = Parser\TypeLoader::getMappedClassName('flex.messaging.messages.RemotingMessage');
-        $this->assertEquals('Zend\\Amf\\Value\\Messaging\\RemotingMessage', $class);
+        $this->assertEquals('ZendAmf\\Value\\Messaging\\RemotingMessage', $class);
     }
 
     /**
@@ -36,7 +36,7 @@ class TypeloaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetMappedClassNameForServer()
     {
-        $class = Parser\TypeLoader::getMappedClassName('Zend\\Amf\\Value\\Messaging\\RemotingMessage');
+        $class = Parser\TypeLoader::getMappedClassName('ZendAmf\\Value\\Messaging\\RemotingMessage');
         $this->assertEquals('flex.messaging.messages.RemotingMessage', $class);
     }
 
@@ -47,7 +47,7 @@ class TypeloaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadTypeSuccess()
     {
         $class = Parser\TypeLoader::loadType('flex.messaging.messages.RemotingMessage');
-        $this->assertEquals('Zend\\Amf\\Value\\Messaging\\RemotingMessage', $class);
+        $this->assertEquals('ZendAmf\\Value\\Messaging\\RemotingMessage', $class);
     }
 
     /**
@@ -56,9 +56,9 @@ class TypeloaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetMappingClass()
     {
-        Parser\TypeLoader::setMapping('com.example.vo.Contact','ZendTest\\Amf\\TestAsset\\Contact');
+        Parser\TypeLoader::setMapping('com.example.vo.Contact','ZendAmfTest\\TestAsset\\Contact');
         $class = Parser\TypeLoader::getMappedClassName('com.example.vo.Contact');
-        $this->assertEquals('ZendTest\\Amf\\TestAsset\\Contact', $class);
+        $this->assertEquals('ZendAmfTest\\TestAsset\\Contact', $class);
     }
 
     public function testUnknownClassMap()

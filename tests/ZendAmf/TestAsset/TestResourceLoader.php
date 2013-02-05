@@ -10,22 +10,41 @@
 
 namespace ZendAmfTest\TestAsset;
 
-use Zend\Loader\PrefixPathMapper;
+use Zend\Loader\PluginClassLocator;
 
-class TestResourceLoader implements PrefixPathMapper
+class TestResourceLoader implements PluginClassLocator
 {
-    public $suffix;
-    public $namespace = 'ZendTest\\Amf\\TestAsset\\';
+    protected $suffix;
+    protected $namespace = 'ZendAmfTest\\TestAsset\\';
 
     public function __construct($suffix)
     {
         $this->suffix = $suffix;
     }
 
-    public function addPrefixPath($prefix, $path) {}
-    public function removePrefixPath($prefix, $path = null) {}
-    public function isLoaded($name) {}
-    public function getClassName($name) {}
+    public function registerPlugin($shortName, $className)
+    {
+    }
+
+    public function unregisterPlugin($shortName)
+    {
+    }
+
+    public function getRegisteredPlugins()
+    {
+    }
+
+    public function isLoaded($name)
+    {
+    }
+
+    public function getClassName($name)
+    {
+    }
+
+    public function getIterator()
+    {
+    }
 
     public function load($name)
     {

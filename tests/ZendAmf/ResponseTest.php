@@ -44,7 +44,6 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     {
         $this->_originaltimezone = date_default_timezone_get();
         date_default_timezone_set('America/Chicago');
-        Locale::setFallback('en_US');
         Parser\TypeLoader::resetMap();
         $this->_response = new \ZendAmf\Response\StreamResponse();
     }
@@ -535,7 +534,10 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testReferenceObjectsToAmf3()
     {
-        $data = new TestAsset\ReferenceTest();
+        // Responses are looking for non-namespaced objects.
+        require_once __DIR__ . '/TestAsset/ZendAmfReferenceTest.php';
+
+        $data = new \ReferenceTest();
         $data = $data->getReference();
 
         // Create an acknowlege message for a response to a RemotingMessage
@@ -795,9 +797,12 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     */
     public function testPhpObjectNameSerializedToAmf0ClassName()
     {
+        // Responses are looking for non-namespaced objects.
+        require_once __DIR__ . '/TestAsset/ZendAmfContactTest.php';
+
         $data = array();
 
-        $contact = new TestAsset\ContactVO();
+        $contact = new \ContactVO();
         $contact->id        = '15';
         $contact->firstname = 'Joe';
         $contact->lastname  = 'Smith';
@@ -806,7 +811,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
         array_push( $data, $contact );
 
-        $contact = new TestAsset\ContactVO();
+        $contact = new \ContactVO();
         $contact->id        = '23';
         $contact->firstname = 'Adobe';
         $contact->lastname  = 'Flex';

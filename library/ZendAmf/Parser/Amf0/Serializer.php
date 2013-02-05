@@ -11,9 +11,7 @@
 namespace ZendAmf\Parser\Amf0;
 
 use DateTime;
-
 use ZendAmf as Amf;
-
 use ZendAmf\Parser;
 use ZendAmf\Parser\AbstractSerializer;
 
@@ -191,10 +189,10 @@ class Serializer extends AbstractSerializer
             || $markerType == Amf\Constants::AMF0_ARRAY
             || $markerType == Amf\Constants::AMF0_TYPEDOBJECT
         ) {
-            $ref = array_search($object, $this->_referenceObjects,true);
+            $ref = array_search($object, $this->_referenceObjects, true);
             //handle object reference
             if ($ref !== false){
-                $this->writeTypeMarker($ref,Amf\Constants::AMF0_REFERENCE);
+                $this->writeTypeMarker($ref, Amf\Constants::AMF0_REFERENCE);
                 return true;
             }
 
@@ -215,7 +213,9 @@ class Serializer extends AbstractSerializer
         // Loop each element and write the name of the property.
         foreach ($object as $key => &$value) {
             // skip variables starting with an _ private transient
-            if( $key[0] == "_") continue;
+            if ($key[0] == '_') {
+                continue;
+            }
             $this->_stream->writeUTF($key);
             $this->writeTypeMarker($value);
         }
@@ -242,7 +242,7 @@ class Serializer extends AbstractSerializer
         } else {
             // Write the length of the numeric array
             $this->_stream->writeLong($length);
-            for ($i=0; $i<$length; $i++) {
+            for ($i = 0; $i < $length; $i++) {
                 $value = isset($array[$i]) ? $array[$i] : null;
                 $this->writeTypeMarker($value);
             }
@@ -260,7 +260,7 @@ class Serializer extends AbstractSerializer
     public function writeDate(DateTime $date)
     {
         // Make the conversion and remove milliseconds.
-        $this->_stream->writeDouble($date->getTimestamp());
+        $this->_stream->writeDouble($date->getTimestamp() * 1000);
 
         // Flash does not respect timezone but requires it.
         $this->_stream->writeInt(0);
