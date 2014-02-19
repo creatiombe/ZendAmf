@@ -20,4 +20,5 @@ namespace ZendAmf\Value\Messaging;
  */
 class ArrayCollection
 {
+
 }
